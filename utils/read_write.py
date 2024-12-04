@@ -1,7 +1,7 @@
 class ReadWrite:
 
     @staticmethod
-    def read_file_separated_numbers(path: str, separator: str, columns: int):
+    def read_file_columns_numbers(path: str, separator: str, columns: int):
         data = [[] for _ in range(columns)]
 
         with open(path, 'r') as file:
@@ -13,8 +13,18 @@ class ReadWrite:
         return data
     
     @staticmethod
+    def read_file_rows_numbers(path: str, separator: str):
+        data = []
+
+        with open(path, 'r') as file:
+            for line in file:
+                row = list(map(int, line.strip().split(separator)))
+                data.append(row)
+
+        return data
+    
+    @staticmethod
     def write(path: str, lines: list):
         with open(path, 'w') as file:
             for line in lines:
                 file.write(str(line) + '\n')
-
