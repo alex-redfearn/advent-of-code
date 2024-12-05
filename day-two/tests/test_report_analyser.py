@@ -1,13 +1,13 @@
 from unittest import TestCase
-from report_analyser import ReportAnalyser
+from report_analysis import ReportAnalysis
 
 
-class TestReportAnalyser(TestCase):
+class TestReportAnalysis(TestCase):
 
     def test_given_report_with_zero_errors_when_analysed_returns_safe(self):
         report = [7, 6, 4, 2, 1]
 
-        analyser = ReportAnalyser([report])
+        analyser = ReportAnalysis([report])
 
         count = analyser.get_safe_report_count()
 
@@ -21,7 +21,7 @@ class TestReportAnalyser(TestCase):
             [49, 51, 53, 56, 56, 57, 55],
         ]
 
-        analyser = ReportAnalyser(reports)
+        analyser = ReportAnalysis(reports)
 
         count = analyser.get_safe_report_count()
 
@@ -37,7 +37,7 @@ class TestReportAnalyser(TestCase):
             [69, 71, 69, 66, 63],  # fixed by removing current error index - 1.
         ]
 
-        analyser = ReportAnalyser(report)
+        analyser = ReportAnalysis(report)
 
         count = analyser.get_safe_report_count()
 
