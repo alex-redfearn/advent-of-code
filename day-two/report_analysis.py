@@ -1,7 +1,7 @@
 from math import copysign
 
 
-class ReportAnalyser:
+class ReportAnalysis:
 
     def __init__(self, reports: list[list[int]]):
         self.reports = reports
