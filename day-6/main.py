@@ -5,9 +5,10 @@ from game import Game
 def main():
     rows = ReadWrite.read_file_rows("day-6/input/input.txt")
     map = create_map(rows)
-    unique_moves = Game(map[0], map[1]).play()
-    print(unique_moves)
-
+    game = Game(map[0])
+    
+    loops = game.loop_count(map[1])
+    print(loops)
 
 def create_map(rows) -> tuple:
     map = {}

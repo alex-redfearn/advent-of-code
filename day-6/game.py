@@ -1,44 +1,64 @@
-from direction import Direction
-
-
 class Game:
 
     EMPTY_SPACE = "."
     OBSTACLE = "#"
-    FOOT_PRINT = "X"
 
-    def __init__(self, map: dict[tuple, str], start: tuple[int, int]):
+    def __init__(self, map: dict[tuple, str]):
         self.map = map
-        self.coordinates = list(start)
-        self.current_direction = Direction.UP
-        self.game_over = False
 
-    def play(self) -> int:
-        while self.game_over == False:
+    def loop_count(self, start_position: tuple[int, int]) -> int:
+        loop_count = 0
 
-            # Mark current pos
-            self.map[(self.coordinates[0], self.coordinates[1])] = self.FOOT_PRINT
+        # place an obstacle at every empty space and run the game.
+        for coordinates in self.map.keys():
+            if self.map[coordinates] == self.EMPTY_SPACE:
 
-            # Get next pos
-            next_row = self.coordinates[0] + self.current_direction.row
-            next_col = self.coordinates[1] + self.current_direction.col
+                self.map[coordinates] = self.OBSTACLE
 
-            next_value = self.map.get((next_row, next_col))
+                # Check if the character left the map or if it ended in a loop.
+                if self.play(start_position) != [-1, -1]:
+                    loop_count += 1
 
-            if next_value == self.EMPTY_SPACE or next_value == self.FOOT_PRINT:
-                self.move(next_row, next_col)
-                continue
+                self.map[coordinates] = self.EMPTY_SPACE
 
-            if next_value == self.OBSTACLE:
-                self.current_direction = Direction.turn_right(self.current_direction)
-                continue
+        return loop_count
+
+    # Returns final coordinates
+    def play(self, coordinates) -> tuple[int, int]:
+        direction = (-1, 0)
+        foot_steps = set()
+
+        while True:
+            
+            if (coordinates, direction) in foot_steps:
+                return coordinates
+
+            foot_steps.add((coordinates, direction))
+
+            next_coordinates = (
+                coordinates[0] + direction[0],
+                coordinates[1] + direction[1],
+            )
+
+            next_value = self.map.get(next_coordinates)
 
             if next_value is None:
-                self.game_over = True
-                break
+                return [-1, -1]
 
-        # Returns a count of the unique moves made by the player
-        return sum(1 for value in self.map.values() if value == self.FOOT_PRINT)
+            if self.collision(next_value):
+                direction = self.turn_right(direction)
+                continue
 
-    def move(self, row, col):
-        self.coordinates = [row, col]
+            coordinates = next_coordinates
+
+    def collision(self, value):
+        return value == self.OBSTACLE
+
+    def turn_right(self, direction: tuple[int, int]) -> tuple[int, int]:
+        direction_map = {
+            (-1, 0): (0, 1),  # Up -> Right
+            (0, 1): (1, 0),  # Right -> Down
+            (1, 0): (0, -1),  # Down -> Left
+            (0, -1): (-1, 0),  # Left -> Up
+        }
+        return direction_map[direction]
